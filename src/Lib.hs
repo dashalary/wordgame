@@ -31,7 +31,8 @@ getLines grid =
    in lines ++ (map reverse lines)
 
 diagonalize :: Grid -> Grid
-diagonalize grid = (transpose . skew) grid
+-- composed function of transpose and skew
+diagonalize = transpose . skew
 
 skew :: Grid -> Grid
 -- base case
