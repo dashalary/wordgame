@@ -6,10 +6,11 @@ module Lib
     findWord,
     findWordInLine,
     findWords,
+    skew,
   )
 where
 
-import Data.List (isInfixOf)
+import Data.List (isInfixOf, transpose)
 import Data.Maybe (catMaybes)
 
 type Grid = [String]
@@ -21,7 +22,23 @@ formatGrid :: Grid -> String
 formatGrid = unlines
 
 getLines :: Grid -> [String]
-getLines grid = grid ++ (map reverse grid)
+getLines grid =
+  let horizontal = grid
+      vertical = transpose grid
+      diagonal1 = diagonalize grid
+      diagonal2 = diagonalize (map reverse grid)
+      lines = horizontal ++ vertical ++ diagonal1 ++ diagonal2
+   in lines ++ (map reverse lines)
+
+diagonalize :: Grid -> Grid
+diagonalize grid = (transpose . skew) grid
+
+skew :: Grid -> Grid
+-- base case
+skew [] = []
+skew (l : ls) = l : skew (map indent ls)
+  where
+    indent line = '_' : line
 
 findWord :: Grid -> String -> Maybe String
 findWord grid word =
