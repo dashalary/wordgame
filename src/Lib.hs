@@ -20,13 +20,16 @@ outputGrid grid = putStrLn (formatGrid grid)
 formatGrid :: Grid -> String
 formatGrid = unlines
 
+getLines :: Grid -> [String]
+getLines grid = grid ++ (map reverse grid)
+
 findWord :: Grid -> String -> Maybe String
 findWord grid word =
-  let lines = grid ++ (map reverse grid)
+  let lines = getLines grid
       found = or $ map (findWordInLine word) lines
    in if found then Just word else Nothing
 
--- findWords :: Grid -> [String] -> [Bool]
+findWords :: Grid -> [String] -> [String]
 findWords grid words =
   let foundWords = map (findWord grid) words
    in catMaybes foundWords
