@@ -11,15 +11,28 @@ where
 import Data.List (isInfixOf, transpose)
 import Data.Maybe (catMaybes)
 
-type Grid = [String]
+data Cell = Cell (Integer, Integer) Char deriving (Eq, Ord, Show)
 
-outputGrid :: Grid -> IO ()
+type Grid a = [[a]]
+
+zipOverGrid = zipWith zip
+
+zipOverGridWith = zipWith . zipWith
+
+coordsGrid =
+  let rows = map repeat [0 ..]
+      cols = repeat [0 ..]
+   in zipOverGrid rows cols
+
+gridWithCoords = zipOverGridWith Cell coordsGrid
+
+outputGrid :: Grid Char -> IO ()
 outputGrid grid = putStrLn (formatGrid grid)
 
-formatGrid :: Grid -> String
+formatGrid :: Grid Char -> String
 formatGrid = unlines
 
-getLines :: Grid -> [String]
+getLines :: Grid Char -> [String]
 getLines grid =
   let horizontal = grid
       vertical = transpose grid

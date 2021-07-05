@@ -61,6 +61,7 @@ rows = map repeat [0 ..]
 
 infCoords = zipOverGrid rows cols
 
+-- creating a fixed size grid
 repeat8 = take 8 . repeat
 
 cols8 = repeat8 [0 .. 7]
@@ -69,4 +70,8 @@ rows8 = map repeat8 [0 .. 7]
 
 zipOverGrid = zipWith zip
 
+zipOverGridWith = zipWith . zipWith
+
 grid8 = zipOverGrid rows8 cols8
+
+data Cell = Cell (Integer, Integer) Char deriving (Eq, Ord, Show)
