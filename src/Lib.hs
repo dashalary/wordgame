@@ -5,34 +5,54 @@ module Lib
     findWordInLine,
     findWords,
     skew,
+    zipOverGrid,
+    zipOverGridWith,
+    gridWithCoords,
+    cell2char,
+    Cell (Cell, Indent),
   )
 where
 
 import Data.List (isInfixOf, transpose)
 import Data.Maybe (catMaybes)
 
-data Cell = Cell (Integer, Integer) Char deriving (Eq, Ord, Show)
+data Cell
+  = Cell (Integer, Integer) Char
+  | Indent
+  deriving (Eq, Ord, Show)
 
 type Grid a = [[a]]
 
+zipOverGrid :: Grid a -> Grid b -> Grid (a, b)
 zipOverGrid = zipWith zip
 
+zipOverGridWith :: (a -> b -> c) -> Grid a -> Grid b -> Grid c
 zipOverGridWith = zipWith . zipWith
 
+mapOverGrid :: (a -> b) -> Grid a -> Grid b
+mapOverGrid = map . map
+
+coordsGrid :: Grid (Integer, Integer)
 coordsGrid =
   let rows = map repeat [0 ..]
       cols = repeat [0 ..]
    in zipOverGrid rows cols
 
+gridWithCoords :: Grid Char -> Grid Cell
 gridWithCoords = zipOverGridWith Cell coordsGrid
 
-outputGrid :: Grid Char -> IO ()
+outputGrid :: Grid Cell -> IO ()
 outputGrid grid = putStrLn (formatGrid grid)
 
-formatGrid :: Grid Char -> String
-formatGrid = unlines
+formatGrid :: Grid Cell -> String
+formatGrid = unlines . mapOverGrid cell2char
 
-getLines :: Grid Char -> [String]
+cell2char :: Cell -> Char
+-- pattern matching
+cell2char (Cell _ c) = c
+cell2char Indent = '?'
+
+getLines :: Grid Cell -> [[Cell]]
 getLines grid =
   let horizontal = grid
       vertical = transpose grid
@@ -41,27 +61,28 @@ getLines grid =
       lines = horizontal ++ vertical ++ diagonal1 ++ diagonal2
    in lines ++ (map reverse lines)
 
-diagonalize :: Grid -> Grid
+diagonalize :: Grid Cell -> Grid Cell
 -- composed function of transpose and skew
 diagonalize = transpose . skew
 
-skew :: Grid -> Grid
+skew :: Grid Cell -> Grid Cell
 -- base case
 skew [] = []
 skew (l : ls) = l : skew (map indent ls)
   where
-    indent line = '_' : line
+    indent line = Indent : line
 
-findWord :: Grid -> String -> Maybe String
-findWord grid word =
-  let lines = getLines grid
-      found = or $ map (findWordInLine word) lines
-   in if found then Just word else Nothing
+findWord :: Grid Cell -> String -> Maybe [Cell]
+findWord grid word = undefined
 
-findWords :: Grid -> [String] -> [String]
+-- let lines = getLines grid
+-- found = any (findWordInLine word) lines
+-- in if found then Just word else Nothing
+
+findWords :: Grid Cell -> [String] -> [[Cell]]
 findWords grid words =
   let foundWords = map (findWord grid) words
    in catMaybes foundWords
 
-findWordInLine :: String -> String -> Bool
-findWordInLine = isInfixOf
+findWordInLine :: String -> [Cell] -> Maybe [Cell]
+findWordInLine = undefined -- isInfixOf
