@@ -21,6 +21,7 @@ description:         Please see the README on GitHub at <https://github.com/dash
 
 dependencies:
 - base >= 4.7 && < 5
+- containers
 
 library:
   source-dirs: src
@@ -35,6 +36,7 @@ executables:
     - -with-rtsopts=-N -dynamic
     dependencies:
     - wordgame
+    - containers
 
 tests:
   wordgame-test:
