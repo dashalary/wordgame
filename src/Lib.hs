@@ -15,7 +15,9 @@ module Lib
     makeGame,
     totalWords,
     score,
-    playGame
+    completed,
+    playGame,
+    formatGame
   )
 where
 
@@ -48,19 +50,33 @@ totalWords :: Game -> Int
 totalWords game = length . M.keys $ gameWords game 
 
 score :: Game -> Int
-score game = length . catMaybes . M.elems $ gameWords game 
+score game = length . catMaybes . M.elems $ gameWords game
+
+completed :: Game -> Bool
+completed game = score game == totalWords game
 
 playGame :: Game -> String -> Game 
+-- guard function to prevent score increase from partially correct input
+playGame game word | not $ M.member word (gameWords game)
 playGame game word = 
   let grid = gameGrid game
       foundWord = findWord grid word
-      newGame = case foundWord of
-        Nothing -> game
-        Just cs -> 
-          let dict = gameWords game
-              newDict = M.insert word foundWord dict
-          in Game grid newDict
-  in newGame
+  in case foundWord of
+      Nothing -> game
+      Just cs -> 
+        let dict = gameWords game
+            newDict = M.insert word foundWord dict
+        in game { gameWords = newDict }
+
+
+formatGame :: Game -> String
+formatGame game =
+  let grid = gameGrid game
+  in formatGrid grid
+     ++ "\n\n"
+     ++ (show $ score game)
+     ++ "/"
+     ++ (show $ totalWords game)
 
 zipOverGrid :: Grid a -> Grid b -> Grid (a, b)
 zipOverGrid = zipWith zip
