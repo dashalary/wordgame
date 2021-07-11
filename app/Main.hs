@@ -2,10 +2,12 @@ module Main where
 
 import Data
 import Lib
+import System.IO
 
 main :: IO ()
 main = do
   let game = makeGame grid languages
+  hSetBuffering stdout NoBuffering
   playTurn game
 
 playTurn game = do
@@ -17,4 +19,4 @@ playTurn game = do
   if completed newGame then
     putStrLn "Congratulations!"
   else
-  playTurn newGame
+    playTurn newGame

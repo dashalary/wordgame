@@ -57,7 +57,7 @@ completed game = score game == totalWords game
 
 playGame :: Game -> String -> Game 
 -- guard function to prevent score increase from partially correct input
-playGame game word | not $ M.member word (gameWords game)
+playGame game word | not $ M.member word (gameWords game) = game 
 playGame game word = 
   let grid = gameGrid game
       foundWord = findWord grid word
