@@ -11,7 +11,10 @@ module Lib
     gridWithCoords,
     cell2char,
     Cell (Cell, Indent),
-    Game (Game),
+    Game (gameGrid, gameWords),
+    makeGame,
+    totalWords,
+    score
   )
 where
 
@@ -19,7 +22,11 @@ import Data.List (isInfixOf, transpose)
 import qualified Data.Map as M
 import Data.Maybe (catMaybes, listToMaybe)
 
-data Game = Game (Grid Cell) (M.Map String (Maybe [Cell]))
+data Game = Game {
+              gameGrid :: Grid Cell,
+              gameWords :: M.Map String (Maybe [Cell])
+            }
+            deriving Show 
 
 data Cell
   = Cell (Integer, Integer) Char
@@ -27,6 +34,20 @@ data Cell
   deriving (Eq, Ord, Show)
 
 type Grid a = [[a]]
+
+makeGame :: Grid Char -> [String] -> Game
+makeGame grid words =
+  let gwc = gridWithCoords grid
+      tuplify word = (word, Nothing)
+      list = map tuplify words
+      dict = M.fromList list
+  in Game gwc dict 
+
+totalWords :: Game -> Int 
+totalWords game = length . M.keys $ gameWords game 
+
+score :: Game -> Int
+score game = length . catMaybes . M.elems $ gameWords game 
 
 zipOverGrid :: Grid a -> Grid b -> Grid (a, b)
 zipOverGrid = zipWith zip
