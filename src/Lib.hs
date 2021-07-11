@@ -17,13 +17,16 @@ module Lib
     score,
     completed,
     playGame,
-    formatGame
+    formatGame,
+    makeRandomGrid,
+    fillInBlanks
   )
 where
 
 import Data.List (isInfixOf, transpose)
 import qualified Data.Map as M
 import Data.Maybe (catMaybes, listToMaybe)
+import System.Random 
 
 data Game = Game {
               gameGrid :: Grid Cell,
@@ -77,6 +80,17 @@ formatGame game =
      ++ (show $ score game)
      ++ "/"
      ++ (show $ totalWords game)
+
+makeRandomGrid gen =
+  let (gen1, gen2) = split gen 
+     row = randomRs ('A', 'Z') gen1
+  in row : makeRandomGrid gen2
+
+fillInBlanks gen grid =
+  let r = makeRandomGrid gen
+      fill '_' r = r
+      fill c _ = c 
+  in zipOverGridWith fill grid r
 
 zipOverGrid :: Grid a -> Grid b -> Grid (a, b)
 zipOverGrid = zipWith zip

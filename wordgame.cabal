@@ -34,6 +34,7 @@ library
   build-depends:
       base >=4.7 && <5
     , containers
+    , random
   default-language: Haskell2010
 
 executable wordgame
@@ -46,6 +47,7 @@ executable wordgame
   build-depends:
       base >=4.7 && <5
     , containers
+    , random
     , wordgame
   default-language: Haskell2010
 
@@ -61,5 +63,6 @@ test-suite wordgame-test
       base >=4.7 && <5
     , containers
     , hspec
+    , random
     , wordgame
   default-language: Haskell2010
