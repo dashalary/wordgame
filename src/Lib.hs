@@ -11,12 +11,15 @@ module Lib
     gridWithCoords,
     cell2char,
     Cell (Cell, Indent),
+    Game (Game),
   )
 where
 
 import Data.List (isInfixOf, transpose)
 import qualified Data.Map as M
 import Data.Maybe (catMaybes, listToMaybe)
+
+data Game = Game (Grid Cell) (M.Map String (Maybe [Cell]))
 
 data Cell
   = Cell (Integer, Integer) Char
